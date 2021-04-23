@@ -75,7 +75,7 @@ func (r *sqliteRepo) SelectArticleByID(ctx context.Context, id int64) (*pb.Artic
 }
 
 func (r *sqliteRepo) UpdateArticle(ctx context.Context, id int64, input *pb.ArticleInput) error {
-	cmd := "UPDATE articles SET = author = ?, title = ?, content = ? WHERE id = ?"
+	cmd := "UPDATE articles SET author = ?, title = ?, content = ? WHERE id = ?"
 	_, err := r.db.Exec(cmd, input.Author, input.Title, input.Content, id)
 	if err != nil {
 		return err

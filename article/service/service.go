@@ -68,7 +68,6 @@ func (s *service) UpdateArticle(ctx context.Context, req *pb.UpdateArticleReques
 	if err := s.repository.UpdateArticle(ctx, id, input); err != nil {
 		return nil, err
 	}
-
 	return &pb.UpdateArticleResponse{
 		Article: &pb.Article{
 			Id:      id,
