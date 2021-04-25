@@ -40,6 +40,20 @@ func (c *Client) CreateArticle(ctx context.Context, input *pb.ArticleInput) (*mo
 	}, nil
 }
 
+func (c *Client) ReadArticle(ctx context.Context, id int64) (*model.Article, error) {
+	res, err := c.Service.ReadArticle(ctx, &pb.ReadArticleRequest{Id: id})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Article{
+		ID:     int(res.Article.Id),
+		Author: res.Article.Author,
+		Title:  res.Article.Title,
+	}, nil
+}
+
 func (c *Client) UpdateArticle(ctx context.Context, id int64, input *pb.ArticleInput) (*model.Article, error) {
 	res, err := c.Service.UpdateArticle(ctx, &pb.UpdateArticleRequest{Id: id, ArticleInput: input})
 	if err != nil {

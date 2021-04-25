@@ -5,30 +5,73 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/Masamichi-Iimori/practice-grpc/article/pb"
 	"github.com/Masamichi-Iimori/practice-grpc/graph/generated"
 	"github.com/Masamichi-Iimori/practice-grpc/graph/model"
 )
 
 func (r *mutationResolver) CreateArticle(ctx context.Context, input model.CreateInput) (*model.Article, error) {
-	panic(fmt.Errorf("not implemented"))
+	article, err := r.ArticleClient.CreateArticle(
+		ctx,
+		&pb.ArticleInput{
+			Author:  input.Author,
+			Title:   input.Title,
+			Content: input.Content,
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return article, nil
 }
 
 func (r *mutationResolver) UpdateArticle(ctx context.Context, input model.UpdateInput) (*model.Article, error) {
-	panic(fmt.Errorf("not implemented"))
+	article, err := r.ArticleClient.UpdateArticle(
+		ctx,
+		int64(input.ID),
+		&pb.ArticleInput{
+			Author:  input.Author,
+			Title:   input.Title,
+			Content: input.Content,
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	return article, nil
 }
 
 func (r *mutationResolver) DeleteArticle(ctx context.Context, input int) (int, error) {
-	panic(fmt.Errorf("not implemented"))
+	id, err := r.ArticleClient.DeleteArticle(ctx, int64(input))
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }
 
 func (r *queryResolver) Article(ctx context.Context, input int) (*model.Article, error) {
-	panic(fmt.Errorf("not implemented"))
+	// 入力したIDの記事をgRPCサーバーからREAD
+	article, err := r.ArticleClient.ReadArticle(ctx, int64(input))
+	if err != nil {
+		return nil, err
+	}
+
+	// READしたArticleを返す
+	return article, nil
 }
 
 func (r *queryResolver) Articles(ctx context.Context) ([]*model.Article, error) {
-	panic(fmt.Errorf("not implemented"))
+	articles, err := r.ArticleClient.ListArticle(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return articles, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
@@ -39,16 +82,3 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
-}
